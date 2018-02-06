@@ -19,6 +19,10 @@
                         </div>
 
                         "Insert"/"Update": {{ item.Insert }}/{{ item.Update }}, // добавлено новых элементов<br/>
+
+                        {{ chartData.datasets[0].data = [15, 5] }}
+                        <vue-chart type="pie" :data="chartData"></vue-chart>
+
                     </div>
                 </div>
 
@@ -28,21 +32,38 @@
 </template>
 
 <script>
+import VueChart from 'vue-chart-js'
 export default {
   name: 'Dashboard',
+  components: {
+    VueChart
+  },
 
   data: function () {
     return {
       result: [],
       timer: null,
-      interval: 2000
+      interval: 2000,
+
+      chartData: {
+        labels: ['Insert', 'Update'],
+        datasets: [
+          {
+            data: [40, 60],
+            backgroundColor: ['#f00', '#0f0']
+          }
+        ]
+      }
     }
   },
 
   created () {
     console.clear()
-    this.getXXX()
-    this.timer = setInterval(this.getXXX, this.interval)
+    this.loadJSON()
+    this.timer = setInterval(this.loadJSON, this.interval)
+  },
+
+  mounted () {
   },
 
   methods: {
@@ -52,6 +73,10 @@ export default {
 
     progress: function (val1, val2) {
       return Math.floor(100 / val1 * val2)
+    },
+
+    calcPieChart: function (val1, val2) {
+      // this.chartData.datasets[0].data = [val1, val2]
     },
 
     convertDate: function (val) {
@@ -68,7 +93,7 @@ export default {
       return `${hh} ч., ${mm} мин., ${ss} сек.`
     },
 
-    getXXX: function () {
+    loadJSON: function () {
       fetch('http://localhost:3000/db')
         .then(response => response.json())
         .then(json => { this.result = json })
