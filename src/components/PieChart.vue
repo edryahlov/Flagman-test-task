@@ -32,16 +32,12 @@ export default {
   },
   methods: {
     fillData () {
-      let onePercent = this.val[1] / 100
-      let insert = Math.floor(this.val[0] / onePercent) || 0
-      let update = 100 - insert
-
       this.datacollection = {
-        labels: [`Insert/Update progress: ${insert}%`],
+        labels: [`Insert ${this.val[0]}`, `Update ${this.val[1]}`],
         datasets: [
           {
-            backgroundColor: ['#2f642f', '#d4d4d4'],
-            data: [insert, update]
+            backgroundColor: ['#085f89', '#989898'],
+            data: [this.val[0], this.val[1]]
           }
         ]
       }

@@ -1,24 +1,47 @@
 <template>
     <div class="container">
-        <div class="row">
-            <div class="col-6" v-for="item in result[type]" v-bind:key="item.id">
-                <div class="card">
-                    <div class="card-header bg-secondary text-white">Key: {{ item.Key }} {{ type }}</div>
-                    <div class="card-body">
-                        "ShopId":{{ item.ShopId }}, // id магазина<br/>
-                        "YmlcatalogId": {{ item.YmlcatalogId }}<br/>
-                        "Mode": {{ item.Mode }}, // режим задачи<br/>
-                        "StartTime": {{ convertDate(item.StartTime) }}, // время старта<br/>
-                        "UpdateTime": {{ convertDate(item.UpdateTime) }}, // врем обновления<br/>
-                        "Runtime": {{ convertRunTime(item.Runtime) }}<!--, // время выполнения в наносекундах (9 единиц после запятой)--><br/>
+        <div class="row col-12">
+            Скорость обновления: &nbsp;&nbsp;&nbsp;
+            <select v-model="selected">
+                <option v-for="(val, key) in intervals" :value="val" :key="val.id">{{ key }}</option>
+            </select>
 
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" v-bind:style="{width: + progress(item.Total,item.Offset) + '%'}">
-                                {{ progress(item.Total,item.Offset) }}%
+        </div>
+        <div class="row col-12">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="javascript:void(0)" @click="type = 'active'">Active</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0)" @click="type = 'finish'">Finished</a>
+                </li>
+            </ul>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-sm-12" v-for="item in result[type]" v-bind:key="item.id">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">Key: {{ item.Key }} ({{ type }})</div>
+                    <div class="card-body">
+                        "ShopId":{{ item.ShopId }}<br/>
+                        "YmlcatalogId": {{ item.YmlcatalogId }}<br/>
+                        "Mode": {{ item.Mode }}<br/>
+                        "StartTime": {{ convertDate(item.StartTime) }}<br/>
+                        "UpdateTime": {{ convertDate(item.UpdateTime) }}<br/>
+                        "Runtime": {{ convertRunTime(item.Runtime) }}<br/>
+
+                        <div class="card">
+                            <div class="card-header bg-light text-black">Total/Offset progress</div>
+                            <div class="card-body">
+
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" v-bind:style="{width: + progress(item.Total,item.Offset) + '%'}">
+                                        {{ progress(item.Total,item.Offset) }}%
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        "Insert"/"Update": {{ item.Insert }}/{{ item.Update }}, // добавлено новых элементов<br/>
+                        <!-- "Insert"/"Update": {{ item.Insert }}/{{ item.Update }}, // добавлено новых элементов<br/>-->
                         <chart :val="[item.Insert, item.Update]"></chart>
 
                     </div>
@@ -37,7 +60,8 @@ export default {
     return {
       result: [],
       timer: null,
-      interval: 2000,
+      intervals: {'2 sec': 2000, '5 sec': 5000, '10 sec': 10000, '15 sec': 15000, '30 sec': 30000, '1 min': 60000, '2 min': 120000, '5 min': 30000, '10 min': 600000},
+      selected: 2000,
       type: 'active'
     }
   },
@@ -45,7 +69,14 @@ export default {
   created () {
     console.clear()
     this.loadJSON()
-    this.timer = setInterval(this.loadJSON, this.interval)
+    this.timer = setInterval(this.loadJSON, this.selected)
+  },
+
+  watch: {
+    selected: function () {
+      clearInterval(this.timer)
+      this.timer = setInterval(this.loadJSON, this.selected)
+    }
   },
 
   mounted () {
@@ -57,7 +88,7 @@ export default {
     },
 
     progress: function (val1, val2) {
-      return Math.floor(100 / val1 * val2)
+      return Math.floor(100 / val2 * val1) || 0
     },
 
     convertDate: function (val) {
@@ -90,5 +121,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+    .nav {
+        margin: 50px 0;
+    }
+    .card {
+        margin-bottom: 20px;
+    }
 </style>
