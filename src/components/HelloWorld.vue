@@ -10,15 +10,15 @@
         <div class="row col-12">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link active" href="javascript:void(0)" @click="type = 'active'">Active</a>
+                    <a class="nav-link" :class="{ active: isActive }" href="javascript:void(0)" @click="nav('active')">Active</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="javascript:void(0)" @click="type = 'finish'">Finished</a>
+                    <a class="nav-link" :class="{ active: !isActive }" href="javascript:void(0)" @click="nav('finish')">Finished</a>
                 </li>
             </ul>
         </div>
         <div class="row">
-            <div class="col-md-6 col-sm-12" v-for="item in result[type]" v-bind:key="item.id">
+            <div class="col-lg-4 col-md-6 col-sm-12" v-for="item in result[type]" v-bind:key="item.id">
                 <div class="card">
                     <div class="card-header bg-secondary text-white">Key: {{ item.Key }} ({{ type }})</div>
                     <div class="card-body">
@@ -62,7 +62,8 @@ export default {
       timer: null,
       intervals: {'2 sec': 2000, '5 sec': 5000, '10 sec': 10000, '15 sec': 15000, '30 sec': 30000, '1 min': 60000, '2 min': 120000, '5 min': 30000, '10 min': 600000},
       selected: 2000,
-      type: 'active'
+      type: 'active',
+      isActive: true
     }
   },
 
@@ -83,6 +84,11 @@ export default {
   },
 
   methods: {
+    nav: function (type) {
+      this.type = type
+      this.isActive = !this.isActive
+    },
+
     addZeros: function (val, digits = 2) {
       return ('0' + val).slice(-digits)
     },
