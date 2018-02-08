@@ -1,9 +1,9 @@
 <template>
     <div class="container">
         <div class="row">
-            <div class="col-6" v-for="(item, index) in result.active" v-bind:key="index">
+            <div class="col-6" v-for="item in result[type]" v-bind:key="item.id">
                 <div class="card">
-                    <div class="card-header bg-secondary text-white">Key: {{ item.Key }}</div>
+                    <div class="card-header bg-secondary text-white">Key: {{ item.Key }} {{ type }}</div>
                     <div class="card-body">
                         "ShopId":{{ item.ShopId }}, // id магазина<br/>
                         "YmlcatalogId": {{ item.YmlcatalogId }}<br/>
@@ -19,9 +19,7 @@
                         </div>
 
                         "Insert"/"Update": {{ item.Insert }}/{{ item.Update }}, // добавлено новых элементов<br/>
-
-                        {{ chartData.datasets[0].data = [15, 5] }}
-                        <vue-chart type="pie" :data="chartData"></vue-chart>
+                        <chart :val="[item.Insert, item.Update]"></chart>
 
                     </div>
                 </div>
@@ -32,28 +30,15 @@
 </template>
 
 <script>
-import VueChart from 'vue-chart-js'
 export default {
   name: 'Dashboard',
-  components: {
-    VueChart
-  },
 
-  data: function () {
+  data () {
     return {
       result: [],
       timer: null,
       interval: 2000,
-
-      chartData: {
-        labels: ['Insert', 'Update'],
-        datasets: [
-          {
-            data: [40, 60],
-            backgroundColor: ['#f00', '#0f0']
-          }
-        ]
-      }
+      type: 'active'
     }
   },
 
@@ -73,10 +58,6 @@ export default {
 
     progress: function (val1, val2) {
       return Math.floor(100 / val1 * val2)
-    },
-
-    calcPieChart: function (val1, val2) {
-      // this.chartData.datasets[0].data = [val1, val2]
     },
 
     convertDate: function (val) {
