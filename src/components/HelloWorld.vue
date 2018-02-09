@@ -1,11 +1,17 @@
 <template>
     <div class="container">
-        <div class="row col-12">
-            Скорость обновления: &nbsp;&nbsp;&nbsp;
-            <select v-model="selected">
-                <option v-for="(val, key) in intervals" :value="val" :key="val.id">{{ key }}</option>
-            </select>
-
+        <div class="row">
+            <div class="col-12">
+                <pre>{{ $data.selected }}</pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                Скорость обновления: &nbsp;&nbsp;&nbsp;
+                <select v-model="selected">
+                    <option v-for="(val, key) in intervals" :value="val" :key="val.id">{{ key }}</option>
+                </select>
+            </div>
         </div>
         <div class="row col-12">
             <ul class="nav nav-tabs">
@@ -112,7 +118,8 @@ export default {
     },
 
     loadJSON: function () {
-      fetch('http://localhost:3000/db')
+      let jsonPath = process.env.NODE_ENV === 'development' ? 'http://localhost:3000/db' : 'https://api.myjson.com/bins/10gjwx'
+      fetch(jsonPath)
         .then(response => response.json())
         .then(json => { this.result = json })
     }

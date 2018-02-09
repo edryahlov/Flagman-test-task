@@ -8,8 +8,11 @@ import BootstrapVue from 'bootstrap-vue'
 
 Vue.use(BootstrapVue)
 Vue.config.productionTip = false
-// Vue.component('pie-chart', PieChart)
 Vue.component('chart', PieChart)
+
+// let isProduction = process.env.NODE_ENV === 'production'
+// let rootUrl = (isProduction) ? 'http://production.domain/api' : 'http://localhost:8080/'
+// Vue.http.options.root = rootUrl
 
 /* eslint-disable no-new */
 new Vue({
