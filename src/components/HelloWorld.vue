@@ -59,6 +59,10 @@
 </template>
 
 <script>
+import axios from 'axios'
+import Vue from 'vue'
+const conf = require('../conf.json')
+
 export default {
   name: 'Dashboard',
 
@@ -67,7 +71,7 @@ export default {
       result: [],
       timer: null,
       intervals: {'2 sec': 2000, '5 sec': 5000, '10 sec': 10000, '15 sec': 15000, '30 sec': 30000, '1 min': 60000, '2 min': 120000, '5 min': 30000, '10 min': 600000},
-      selected: 2000,
+      selected: 600000,
       type: 'active',
       isActive: true
     }
@@ -87,6 +91,11 @@ export default {
   },
 
   mounted () {
+  },
+
+  ready () {
+    Vue.http.headers.common['Authorization'] = 'Bearer ' + conf.token
+    this.refreshToken()
   },
 
   methods: {
@@ -118,10 +127,32 @@ export default {
     },
 
     loadJSON: function () {
+
       let jsonPath = process.env.NODE_ENV === 'development' ? 'http://localhost:3000/db' : 'https://api.myjson.com/bins/10gjwx'
-      fetch(jsonPath)
+      fetch(jsonPath, {
+        headers: {
+          // 'Authorization': 'Bearer ' + conf.token,
+          'Content-type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
         .then(response => response.json())
         .then(json => { this.result = json })
+      /*
+      const config = {
+        headers: {'Authorization': 'Bearer ' + conf.token}
+      }
+      const bodyParameters = {}
+
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + conf.token
+      axios.post('http://ds02.uumarket.ru:3010/task/list/', bodyParameters, config)
+        .then((response) => {
+          this.loading = false
+          console.log(response.data.value)
+        }, (error) => {
+          console.log(error)
+        })
+        */
     }
   },
 
